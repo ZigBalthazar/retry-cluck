@@ -35,16 +35,25 @@ export class RetryCluckService implements OnApplicationBootstrap {
 
   async retry<T>(
     operation: () => Promise<T>,
-    retries = this.option.retries || 3,
-    delayMs = this.option.delayMs || 1000,
-    backoffFactor = this.option.backoffFactor || 2,
-    useRandomJitter = this.option.useRandomJitter || false,
-    jitterFactor = this.option.jitterFactor || 0.5,
+    options: Partial<{
+      retries: number;
+      delayMs: number;
+      backoffFactor: number;
+      shouldUseRandomJitter: boolean;
+      jitterFactor: number;
+    }> = {},
   ): Promise<T> {
+    const {
+      retries = this.option.retries || 3,
+      delayMs = this.option.delayMs || 1000,
+      backoffFactor = this.option.backoffFactor || 2,
+      shouldUseRandomJitter = this.option.shouldUseRandomJitter || false,
+      jitterFactor = this.option.jitterFactor || 0.5,
+    } = options;
+
     let delay = delayMs;
 
-    const jitterCalculation: ((baseDelay: number) => number) | ((baseDelay: number, jitterFactor: number) => number) =
-      useRandomJitter ? CalculateProportionalJitter : CalculateRandomJitter;
+    const jitterCalculation = shouldUseRandomJitter ? CalculateProportionalJitter : CalculateRandomJitter;
 
     for (let attempt = 1; attempt <= retries; attempt++) {
       try {
@@ -55,7 +64,6 @@ export class RetryCluckService implements OnApplicationBootstrap {
         }
 
         const jitter = jitterCalculation(delay, jitterFactor);
-
         await Delay(delay + jitter);
         delay *= backoffFactor;
       }

@@ -40,18 +40,16 @@ describe('RetryCluckService', () => {
     it('should call the operation once if it succeeds', async () => {
       mockOperation.mockResolvedValue('success');
 
-      const result = await service.retry(mockOperation, 3);
+      const result = await service.retry(mockOperation);
 
       expect(mockOperation).toHaveBeenCalledTimes(1);
       expect(result).toBe('success');
     });
 
     it('should retry the operation if it fails', async () => {
-      mockOperation
-        .mockRejectedValueOnce(new Error('failure'))
-        .mockResolvedValue('success');
+      mockOperation.mockRejectedValueOnce(new Error('failure')).mockResolvedValue('success');
 
-      const result = await service.retry(mockOperation, 3);
+      const result = await service.retry(mockOperation);
 
       expect(mockOperation).toHaveBeenCalledTimes(2);
       expect(result).toBe('success');
@@ -60,7 +58,7 @@ describe('RetryCluckService', () => {
     it('should throw an error after max retries', async () => {
       mockOperation.mockRejectedValue(new Error('failure'));
 
-      await expect(service.retry(mockOperation, 3)).rejects.toThrow('failure');
+      await expect(service.retry(mockOperation)).rejects.toThrow('failure');
       expect(mockOperation).toHaveBeenCalledTimes(3);
     });
 
@@ -69,16 +67,13 @@ describe('RetryCluckService', () => {
       const delayMs = 1000;
       const backoffFactor = 2;
 
-      mockOperation
-        .mockRejectedValueOnce(new Error('failure'))
-        .mockResolvedValue('success');
+      mockOperation.mockRejectedValueOnce(new Error('failure')).mockResolvedValue('success');
 
-      const retryPromise = service.retry(
-        mockOperation,
-        3,
+      const retryPromise = service.retry(mockOperation, {
+        retries: 3,
         delayMs,
         backoffFactor,
-      );
+      });
 
       // Fast-forward timers to simulate delays
       jest.advanceTimersByTime(delayMs);
@@ -100,11 +95,15 @@ describe('RetryCluckService', () => {
       );
       const jitterFactor = 0.5;
 
-      mockOperation
-        .mockRejectedValueOnce(new Error('failure'))
-        .mockResolvedValue('success');
+      mockOperation.mockRejectedValueOnce(new Error('failure')).mockResolvedValue('success');
 
-      await service.retry(mockOperation, 3, 1000, 2, true, jitterFactor);
+      await service.retry(mockOperation, {
+        retries: 3,
+        delayMs: 1000,
+        backoffFactor: 2,
+        shouldUseRandomJitter: true,
+        jitterFactor,
+      });
 
       expect(calculateJitterSpy).toHaveBeenCalledWith(1000, jitterFactor);
     });
