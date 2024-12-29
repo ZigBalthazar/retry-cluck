@@ -9,10 +9,8 @@ import { RetryCluckService } from '@services/core.service';
   providers: [RetryCluckService],
   exports: [RetryCluckService],
 })
-export class RetryCluckModule extends createConfigurableDynamicRootModule<
-  RetryCluckModule,
-  IRetryCluckOptions
->(RETRY_CLUCK_KEY) {
-  static deferred = () =>
-    RetryCluckModule.externallyConfigured(RetryCluckModule, 0);
+export class RetryCluckModule extends createConfigurableDynamicRootModule<RetryCluckModule, IRetryCluckOptions>(
+  RETRY_CLUCK_KEY,
+) {
+  static deferred = () => RetryCluckModule.externallyConfigured(RetryCluckModule, 0);
 }
