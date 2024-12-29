@@ -1,7 +1,7 @@
 {
   "name": "retry-cluck",
   "version": "0.0.1",
-  "description": "retry pattern util package for nestjs",
+  "description": "retry utility for NestJS with support for customizable backoff, jitter, and future-proof features like HTTP and gRPC retries.",
   "main": "index.js",
   "scripts": {
     "build": "rimraf --glob dist/* && tsc --project tsconfig.json && tscpaths -p tsconfig.json -s ./src -o ./dist && copyfiles -u 1 src/**/*.css src/**/*.js dist",
@@ -16,7 +16,7 @@
     "netsjs"
   ],
   "author": "zig balthazar",
-  "license": "MTI",
+  "license": "MIT",
   "dependencies": {
     "@golevelup/nestjs-modules": "^0.7.1"
   },
