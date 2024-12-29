@@ -1,6 +1,6 @@
 {
   "name": "retry-cluck",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "retry utility for NestJS with support for customizable backoff, jitter, and future-proof features like HTTP and gRPC retries.",
   "main": "index.js",
   "scripts": {
